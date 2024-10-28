@@ -1,11 +1,12 @@
 from typing import Protocol
 
 from app.domain.entities.user import UserEntity
+from app.domain.value_objects.idvo import IdVO
 
 
 class BaseUserRepository(Protocol):
     """
-    Base user repository protocol, from which database user repository should be inherited
+    Base Protocol, from which User Repository implementation should be inherited
     """
     
     async def create(self, entity: UserEntity) -> UserEntity:
@@ -14,11 +15,11 @@ class BaseUserRepository(Protocol):
     async def get_all(self) -> list[UserEntity]:
         raise NotImplementedError()
     
-    async def get_by_email(self) -> UserEntity | None:
+    async def get_by_id(self, id_: IdVO) -> UserEntity | None:
         raise NotImplementedError()
     
-    async def get_by_id(self) -> UserEntity | None:
+    async def get_by_email(self, email: str) -> UserEntity | None:
         raise NotImplementedError()
     
-    async def delete(self) -> None:
+    async def delete(self, id_: IdVO) -> None:
         raise NotImplementedError()

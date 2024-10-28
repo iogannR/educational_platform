@@ -8,19 +8,19 @@ services:
     volumes:
       - ./app:/src/app
     ports:
-      - ${APP_HOST_PORT}:8000
+      - $8000:8000
     restart: always
     env_file:
       - .env
   db:
     container_name: project_postgres
-    image: postgres
+    image: postgres:16.3
     environment:
-      - POSTGRES_DB=${POSTGRES_DATABASE}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=edu_platform_database
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - ${POSTGRES_DB_HOST_PORT}:5432
+      - 5432:5432
     volumes:
-      - .postgres:/var/lib/postgresql/data
+      - .postgres_data:/var/lib/postgresql/data
     restart: always
