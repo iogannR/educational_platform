@@ -1,22 +1,15 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends
-from dependency_injector.wiring import inject, Provide
+from fastapi import APIRouter
+from dishka.integrations.fastapi import DishkaRoute, FromDishka
 
 from app.application.dto.user import UserResponse
 from app.application.use_cases.user import GetAllUsersUseCase
-from app.infrastructure.container import Container
 
 
-router = APIRouter(tags=["Users"])
+router = APIRouter(tags=["Users"], route_class=DishkaRoute)
 
 
-@router.get("/", response_model=UserResponse)
-@inject
+@router.get("/")
 async def get_all_users(
-    get_all_users_use_case: Annotated[
-        GetAllUsersUseCase, 
-        Depends(lambda: Container.get_all_users_use_case),
-    ],
-):
-    return await get_all_users_use_case()
+    get_all_users_interactor: FromDishka[GetAllUsersUseCase],
+) -> list[UserResponse]:
+    return await get_all_users_interactor()
