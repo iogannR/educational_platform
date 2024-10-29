@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.engine import Result
@@ -6,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import UserEntity
 from app.domain.repositories.user import BaseUserRepository
-from app.domain.value_objects.idvo import IdVO
 from app.infrastructure.database.models.user import User
 
 
@@ -17,7 +17,12 @@ class UserSQLAlchemyRepository(BaseUserRepository):
         self._session = session
         
     async def create(self, entity: UserEntity) -> UserEntity:
-        user: User = User(**asdict(entity))
+        user: User = User(
+            id=entity.id, 
+            username=entity.username,
+            email=entity.email,
+            password=entity.password,
+        )
         self._session.add(user)
         await self._session.commit()
         await self._session.refresh(user)
@@ -29,7 +34,7 @@ class UserSQLAlchemyRepository(BaseUserRepository):
         entities: list[User] = result.scalars().all()
         return [user.to_entity() for user in entities]
         
-    async def get_by_id(self, id_: IdVO) -> UserEntity | None:
+    async def get_by_id(self, id_: UUID) -> UserEntity | None:
         user: User | None = await self._session.get(User, id_)
         if not user:
             return None
@@ -41,8 +46,7 @@ class UserSQLAlchemyRepository(BaseUserRepository):
             return None
         return user.to_entity()
         
-    async def delete(self, id_: IdVO) -> None:
+    async def delete(self, id_: UUID) -> None:
         user: User | None = await self._session.get(User, id_)
         await self._session.delete(user)
         await self._session.execute
-        return

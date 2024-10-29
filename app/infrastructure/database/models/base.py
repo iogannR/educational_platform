@@ -1,4 +1,4 @@
-import uuid
+from uuid import UUID, uuid4
 
 from sqlalchemy import MetaData
 from sqlalchemy.orm import (
@@ -14,7 +14,7 @@ from app.infrastructure.config import settings
 class Base(DeclarativeBase):
     __abstract__ = True
     
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     
     metadata = MetaData(
         naming_convention=settings.db.naming_convention,
