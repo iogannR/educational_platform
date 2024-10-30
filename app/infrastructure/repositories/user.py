@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from uuid import UUID
 
 from sqlalchemy import select
@@ -18,7 +17,7 @@ class UserSQLAlchemyRepository(BaseUserRepository):
         
     async def create(self, entity: UserEntity) -> UserEntity:
         user: User = User(
-            id=entity.id, 
+            id=entity.id,
             username=entity.username,
             email=entity.email,
             password=entity.password,
@@ -41,7 +40,9 @@ class UserSQLAlchemyRepository(BaseUserRepository):
         return user.to_entity()
         
     async def get_by_email(self, email: str) -> UserEntity | None:
-        user: User | None = await self._session.get(User, email)
+        stmt = select(User).where(User.email == email)
+        result: Result = await self._session.execute(stmt)
+        user:  User | None = result.scalar_one_or_none()
         if not user:
             return None
         return user.to_entity()
@@ -49,4 +50,4 @@ class UserSQLAlchemyRepository(BaseUserRepository):
     async def delete(self, id_: UUID) -> None:
         user: User | None = await self._session.get(User, id_)
         await self._session.delete(user)
-        await self._session.execute
+        await self._session.commit()
