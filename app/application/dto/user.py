@@ -27,6 +27,7 @@ class UserResponse(BaseModel):
     id: UUID
     username: str
     email: str
+    password: str
     
     @classmethod
     def from_entity(cls, entity: UserEntity) -> UserResponse:

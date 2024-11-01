@@ -7,6 +7,7 @@ from app.application.use_cases.user import (
     GetUserByEmailUseCase,
     DeleteUserUseCase,
 )
+from app.domain.adapters.password_hash import BasePasswordHashAdapter
 from app.domain.repositories.user import BaseUserRepository
 
 
@@ -16,8 +17,12 @@ class UserInteractorProvider(Provider):
     async def provide_create(
         self,
         user_repository: FromDishka[BaseUserRepository],
+        password_hash_adapter: FromDishka[BasePasswordHashAdapter],
     ) -> CreateUserUseCase:
-        return CreateUserUseCase(repository=user_repository)
+        return CreateUserUseCase(
+            repository=user_repository,
+            password_hash_adapter=password_hash_adapter,
+        )
     
     @provide(scope=Scope.REQUEST)
     async def provide_get_all(

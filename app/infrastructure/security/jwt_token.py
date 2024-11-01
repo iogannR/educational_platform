@@ -3,10 +3,11 @@ from datetime import UTC, datetime, timedelta
 
 import jwt
 
+from app.domain.adapters.jwt_token import BaseJWTTokenAdapter
 from app.infrastructure.config import settings
 
 
-class JWTTokenProcessor:
+class JWTTokenAdapter(BaseJWTTokenAdapter):
     
     @classmethod
     def encode_jwt(
@@ -39,5 +40,5 @@ class JWTTokenProcessor:
         token: str,
         key: str = settings.jwt_auth.jwt_public_path.read_text(),
         algoritms: list = [settings.jwt_auth.algorithm],
-    ):
+    ) -> dict:
         return jwt.decode(token, key, algoritms)

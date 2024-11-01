@@ -4,13 +4,19 @@ from fastapi import HTTPException, status
 
 from app.application.dto.user import UserCreate, UserResponse
 from app.application.use_cases.base import BaseInteractor
+from app.domain.adapters.password_hash import BasePasswordHashAdapter
 from app.domain.entities.user import UserEntity
 from app.domain.repositories.user import BaseUserRepository
 
 
 class CreateUserUseCase(BaseInteractor[UserCreate, UserResponse]):
-    def __init__(self, repository: BaseUserRepository) -> None:
+    def __init__(
+        self, 
+        repository: BaseUserRepository,
+        password_hash_adapter: BasePasswordHashAdapter,
+    ) -> None:
         self._repository = repository
+        self._password_hash_adapter = password_hash_adapter
     
     async def __call__(self, request: UserCreate) -> UserResponse:
         existing = await self._repository.get_by_email(request.email)
@@ -20,7 +26,11 @@ class CreateUserUseCase(BaseInteractor[UserCreate, UserResponse]):
                 detail="Такой пользователь уже существует!",
             )
         
-        params_entity = request.to_entity()
+        params_entity = UserEntity(
+            username=request.username,
+            email=request.email,
+            password=self._password_hash_adapter.hash_password(request.password),
+        )
         entity: UserEntity = await self._repository.create(params_entity)
         return UserResponse.from_entity(entity)
     

@@ -1,7 +1,9 @@
 from passlib.context import CryptContext
 
+from app.domain.adapters.password_hash import BasePasswordHashAdapter
 
-class PasswordHasher:
+
+class PasswordHashAdapter(BasePasswordHashAdapter):
     
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     

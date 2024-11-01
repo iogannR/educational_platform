@@ -28,8 +28,8 @@ class RunConfig(BaseModel):
 
 
 class JWTAuthConfig(BaseModel):
-    jwt_private_path: Path = BASE_DIR / "infrastructure" / "security" / "jwt-private.pem"
-    jwt_public_path: Path = BASE_DIR / "infrastructure" / "security" / "jwt-public.pem"
+    jwt_private_path: Path = BASE_DIR / "infrastructure" / "certs" / "jwt-private.pem"
+    jwt_public_path: Path = BASE_DIR / "infrastructure" / "certs" / "jwt-public.pem"
     algorithm: str = "RS256"
     expire_minutes: int = 3
 
